@@ -27,8 +27,8 @@ import json
 import re
 import sys
 from dataclasses import dataclass
-from pathlib import Path
-from time import perf_counter_ns
+from pathlib import Path #파일 경로를 다루기 위함. 
+from time import perf_counter_ns #성능 측정용 함수, ns는 나노초를 의미함. 
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 # -----------------------------------------------------------------------------
@@ -38,6 +38,8 @@ from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 # FlatMatrix: 1차원으로 펼친 행렬. 예) [0,1,0,1,1,1,0,1,0]
 Matrix = List[List[float]]
 FlatMatrix = List[float]
+#함수를 만들 때 input값의 형식을 지정할 때, 보다 직관적으로 쓰기 위함임. 
+# def mac_score(pattern: Matrix, filter_matrix: Matrix) -> float:
 
 # -----------------------------------------------------------------------------
 # 프로그램 전체에서 공통으로 사용하는 상수들
@@ -45,12 +47,13 @@ FlatMatrix = List[float]
 STANDARD_CROSS = "Cross"      # 내부 표준 라벨: 십자가 패턴
 STANDARD_X = "X"              # 내부 표준 라벨: X 패턴
 UNDECIDED = "UNDECIDED"      # 두 점수가 사실상 같을 때 사용하는 판정값
-EPSILON = 1e-9                # 부동소수점 비교용 허용 오차
+EPSILON = 1e-9                # 부동소수점 비교용 허용 오차 , 차이가 0.00000001로 매우 작을 떄는 같은 것으로 보게끔 함. 
 DEFAULT_REPEAT = 10           # 성능 측정 반복 횟수 기본값
 
 # 정규표현식
 # size_13_1 같은 패턴 키에서 13, 1 같은 정보를 꺼내기 위해 사용
 PATTERN_KEY_RE = re.compile(r"^size_(\d+)_(.+)$")
+
 # size_13 같은 필터 그룹 키를 읽기 위해 사용
 SIZE_KEY_RE = re.compile(r"^size_(\d+)$")
 
@@ -94,7 +97,7 @@ class BenchmarkResult:
     optimized_ms: float
     operations: int
 
-    @property
+    @property #이 태그는 함수를 호출할 때 ()를 안써도 되게끔 하기 위함
     def improvement_pct(self) -> float:
         """개선율(%) 계산.
 
@@ -153,8 +156,8 @@ def format_number(value: Optional[float]) -> str:
     if value is None:
         return "N/A"
     if abs(value - int(value)) < EPSILON:
-        return f"{value:.1f}"
-    return f"{value:.12f}".rstrip("0").rstrip(".")
+        return f"{value:.1f}" #정수는 소수점 한자리만 출력
+    return f"{value:.12f}".rstrip("0").rstrip(".") #소수면 뒤의 불필요한 0과 점을 제거
 
 
 def is_number(value: Any) -> bool:
@@ -164,6 +167,12 @@ def is_number(value: Any) -> bool:
     True/False가 숫자로 잘못 통과하지 않게 별도 제외한다.
     """
     return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+#isinstance(값, (int, float)) 이 값이 int거나 float 이냐를 묻는 함수임.
+
+print(isinstance(3, (int, float)))      # True
+print(isinstance(3.14, (int, float)))   # True
+print(isinstance("hello", (int, float))) # False
 
 
 # -----------------------------------------------------------------------------
@@ -184,8 +193,12 @@ def coerce_matrix(obj: Any, *, context: str, expected_size: Optional[int] = None
     예를 들어 size_5 패턴인데 실제 input이 5x4이면 FAIL 처리해야 하므로,
     이 함수가 그 검증을 맡는다.
     """
-    if not isinstance(obj, list) or not obj:
-        raise ValueError(f"{context}: 2차원 배열(list of lists)이어야 합니다.")
+
+    if not isinstance(obj, list):
+        raise ValueError(f"{context}: 최상위 객체는 리스트여야 합니다.")
+
+    if not obj:
+        raise ValueError(f"{context}: 빈 행렬은 허용되지 않습니다.")
 
     matrix: Matrix = []
     row_length: Optional[int] = None
