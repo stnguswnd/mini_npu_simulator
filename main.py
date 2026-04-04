@@ -169,10 +169,9 @@ def is_number(value: Any) -> bool:
     return isinstance(value, (int, float)) and not isinstance(value, bool)
 
 #isinstance(값, (int, float)) 이 값이 int거나 float 이냐를 묻는 함수임.
-
-print(isinstance(3, (int, float)))      # True
-print(isinstance(3.14, (int, float)))   # True
-print(isinstance("hello", (int, float))) # False
+#print(isinstance(3, (int, float)))      # True
+#print(isinstance(3.14, (int, float)))   # True
+#print(isinstance("hello", (int, float))) # False
 
 
 # -----------------------------------------------------------------------------
