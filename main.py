@@ -876,7 +876,7 @@ def analyze_json_cases(path: Path, repeat: int) -> int:
 
     print_divider("[3] 성능 분석")
     benchmark_results = benchmark_sizes([3, 5, 13, 25], repeat)
-    print_benchmark_table(benchmark_results, repeat)
+    print_benchmark_table(benchmark_results, repeat) #모드 2에 성능 분석
 
     print_divider("[4] 결과 요약")
     total = len(results)
