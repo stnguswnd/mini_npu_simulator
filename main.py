@@ -653,7 +653,7 @@ def sort_case_id(case_id: str) -> Tuple[int, str]:
     match = PATTERN_KEY_RE.match(case_id)
     if match is None:
         return (10**9, case_id)
-    return (int(match.group(1)), case_id)
+    return (int(match.group(1)), case_id) #사이즈를 출력
 
 
 def analyze_case(case_id: str, case_obj: Any, filter_sets: Dict[int, Dict[str, Matrix]]) -> CaseResult:
